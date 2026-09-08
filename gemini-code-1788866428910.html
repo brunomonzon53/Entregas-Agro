@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Entregas Agro 🚜</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #eef2f5;
+      padding: 15px;
+      margin: 0;
+    }
+    .card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #1b365d;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      color: #444;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00875a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background-color: #006644; }
+    button:disabled { background-color: #a5d6a7; }
+    #mensaje {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+      text-align: center;
+      font-weight: bold;
+    }
+    .exito { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Registro de Entrega - Agro 🚜</h2>
+    <form id="formAgro">
+      <div class="form-group">
+        <label for="cliente">Cliente / CUIT:</label>
+        <input type="text" id="cliente" required placeholder="Ej: Agropecuaria Don Pedro">
+      </div>
+
+      <div class="form-group">
+        <label for="campo">Establecimiento / Ubicación:</label>
+        <input type="text" id="campo" required placeholder="Ej: Estancia La Lucila - Lote 4">
+      </div>
+
+      <div class="form-group">
+        <label for="producto">Producto:</label>
+        <select id="producto" required>
+          <option value="">Seleccionar producto...</option>
+          <option value="Gasoil Grado 2 (Ultra)">Gasoil Grado 2 (Ultra)</option>
+          <option value="Gasoil Grado 3 (Infinia Diesel)">Gasoil Grado 3 (Infinia Diesel)</option>
+          <option value="Lubricantes / Envasados">Lubricantes / Envasados</option>
+          <option value="Fertilizantes">Fertilizantes</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="cantidad">Litros / Unidades:</label>
+        <input type="number" id="cantidad" required placeholder="Ej: 5000" min="1">
+      </div>
+
+      <div class="form-group">
+        <label for="remito">N° de Remito:</label>
+        <input type="text" id="remito" required placeholder="Ej: 0001-00004582">
+      </div>
+
+      <div class="form-group">
+        <label for="chofer">Chofer / Unidad:</label>
+        <input type="text" id="chofer" required placeholder="Ej: Carlos Gómez (Camión 2)">
+      </div>
+
+      <div class="form-group">
+        <label for="estado">Estado Inicial:</label>
+        <select id="estado">
+          <option value="Pendiente de Salida">Pendiente de Salida</option>
+          <option value="En Viaje">En Viaje</option>
+          <option value="Entregado">Entregado / Completado</option>
+        </select>
+      </div>
+
+      <button type="submit" id="btnEnviar">Registrar Entrega</button>
+    </form>
+
+    <div id="mensaje"></div>
+  </div>
+
+  <script>
+    // ⚠️ PEGAR AQUÍ LA URL DE TU NUEVA IMPLEMENTACIÓN DE APPS SCRIPT
+    const SCRIPT_URL = 'TU_NUEVA_URL_DE_APPS_SCRIPT_AQUI';
+
+    const form = document.getElementById('formAgro');
+    const mensajeDiv = document.getElementById('mensaje');
+    const btnEnviar = document.getElementById('btnEnviar');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Guardando en sistema...';
+      mensajeDiv.style.display = 'none';
+
+      const payload = {
+        cliente: document.getElementById('cliente').value,
+        campo: document.getElementById('campo').value,
+        producto: document.getElementById('producto').value,
+        cantidad: document.getElementById('cantidad').value,
+        remito: document.getElementById('remito').value,
+        chofer: document.getElementById('chofer').value,
+        estado: document.getElementById('estado').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        mensajeDiv.className = 'exito';
+        mensajeDiv.textContent = '¡Entrega registrada en la planilla! 📦';
+        mensajeDiv.style.display = 'block';
+        form.reset();
+      })
+      .catch(error => {
+        mensajeDiv.className = 'error';
+        mensajeDiv.textContent = 'Error al registrar. Revisá la conexión.';
+        mensajeDiv.style.display = 'block';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Registrar Entrega';
+      });
+    });
+  </script>
+</body>
+</html>
