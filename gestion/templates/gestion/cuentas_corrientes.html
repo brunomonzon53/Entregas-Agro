@@ -1,0 +1,60 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Cuentas corrientes{% endblock %}
+
+{% block encabezado %}Cuentas corrientes{% endblock %}
+
+{% block contenido %}
+
+<div class="card">
+
+    <h2>Listado de cuentas corrientes</h2>
+
+    <p>Consulta de saldos por cliente y unidad de negocio.</p>
+
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse;">
+
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding:12px;">Cliente</th>
+                    <th style="text-align:left; padding:12px;">CUIT</th>
+                    <th style="text-align:left; padding:12px;">Unidad de negocio</th>
+                    <th style="text-align:right; padding:12px;">Saldo (litros)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for cuenta in cuentas %}
+                <tr>
+                    <td style="padding:12px;">
+                        {{ cuenta.cliente.razon_social }}
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ cuenta.cliente.cuit }}
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ cuenta.get_unidad_negocio_display }}
+                    </td>
+
+                    <td style="padding:12px; text-align:right;">
+                        {{ cuenta.saldo_actual|floatformat:2 }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding:15px;">
+                        No hay cuentas corrientes registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

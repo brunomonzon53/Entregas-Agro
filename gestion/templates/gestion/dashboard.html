@@ -1,0 +1,170 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Litros360 | Panel principal{% endblock %}
+
+{% block encabezado %}Panel principal{% endblock %}
+
+{% block estilos %}
+<style>
+    .welcome {
+        margin-bottom: 25px;
+    }
+
+    .welcome p {
+        color: #7b8998;
+        margin-top: 7px;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .card {
+        background: white;
+        padding: 23px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+    .card p {
+        color: #7b8998;
+        font-size: 13px;
+    }
+
+    .card h2 {
+        font-size: 27px;
+        margin-top: 15px;
+    }
+
+    .balances {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .balance {
+        background: #f5f8fa;
+        padding: 22px;
+        border-radius: 10px;
+    }
+
+    .balance h2 {
+        margin-top: 12px;
+        color: #15966c;
+    }
+
+    @media (max-width: 1000px) {
+        .cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 650px) {
+        .cards, .balances {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<section class="welcome">
+    <h2>Bienvenido a Litros360</h2>
+    <p>Resumen general de la gestión de cuentas corrientes.</p>
+</section>
+
+<section class="cards">
+
+    <div class="card">
+        <p>Clientes registrados</p>
+        <h2>{{ clientes }}</h2>
+    </div>
+
+    <div class="card">
+        <p>Cuentas corrientes</p>
+        <h2>{{ cuentas }}</h2>
+    </div>
+
+    <div class="card">
+        <p>Movimientos registrados</p>
+        <h2>{{ movimientos }}</h2>
+    </div>
+
+    <div class="card">
+        <p>Unidades de negocio</p>
+        <h2>02</h2>
+    </div>
+
+</section>
+
+<section class="section">
+
+    <h3>Resumen de cuentas corrientes</h3>
+
+    <div class="balances">
+
+        <div class="balance">
+            <p>FyO</p>
+            <h2>{{ saldo_fyo|floatformat:2 }} L</h2>
+        </div>
+
+        <div class="balance">
+            <p>Campo Simple</p>
+            <h2>{{ saldo_campo|floatformat:2 }} L</h2>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section">
+
+    <h3>Últimos movimientos</h3>
+
+    <div class="table-container">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Unidad</th>
+                    <th>Operación</th>
+                    <th>Litros</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for movimiento in ultimos_movimientos %}
+
+                <tr>
+                    <td>{{ movimiento.fecha_operacion|date:"d/m/Y" }}</td>
+                    <td>{{ movimiento.cuenta.cliente.razon_social }}</td>
+                    <td>{{ movimiento.cuenta.get_unidad_negocio_display }}</td>
+                    <td>{{ movimiento.get_tipo_display }}</td>
+                    <td>{{ movimiento.litros|floatformat:2 }}</td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5" class="empty">
+                        Todavía no hay movimientos registrados.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

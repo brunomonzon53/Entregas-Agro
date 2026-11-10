@@ -1,0 +1,171 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Litros360 | Nueva liquidación FyO{% endblock %}
+
+{% block encabezado %}Nueva liquidación FyO{% endblock %}
+
+{% block estilos %}
+<style>
+    .form-container {
+        max-width: 850px;
+    }
+
+    .form-description {
+        color: #7b8998;
+        margin-bottom: 25px;
+        font-size: 14px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        border: 1px solid #dce2e8;
+        border-radius: 8px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #15966c;
+    }
+
+    .help-text {
+        color: #8492a0;
+        font-size: 12px;
+    }
+
+    .error-list {
+        color: #c0392b;
+        font-size: 13px;
+        list-style-position: inside;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .btn-save {
+        background: #15966c;
+        color: white;
+        border: none;
+        padding: 13px 22px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel {
+        background: #edf0f3;
+        color: #243447;
+        padding: 13px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    @media (max-width: 650px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+<section class="section form-container">
+
+    <h3>Datos de la liquidación</h3>
+
+    <p class="form-description">
+        Completá los datos del comprobante. Litros360 calculará automáticamente
+        la cantidad de litros correspondiente.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {% if formulario.non_field_errors %}
+            <div class="error-list">
+                {{ formulario.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+
+            {% for campo in formulario %}
+
+                <div class="form-group {% if campo.name == 'observaciones' %}full{% endif %}">
+
+                    <label for="{{ campo.id_for_label }}">
+                        {{ campo.label }}
+                    </label>
+
+                    {{ campo }}
+
+                    {% if campo.help_text %}
+                        <span class="help-text">{{ campo.help_text }}</span>
+                    {% endif %}
+
+                    {% if campo.errors %}
+                        <div class="error-list">
+                            {{ campo.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="form-actions">
+
+            <button type="submit" class="btn-save">
+                Registrar liquidación
+            </button>
+
+            <a href="{% url 'lista_movimientos' %}" class="btn-cancel">
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Asistente virtual{% endblock %}
+{% block encabezado %}Asistente virtual{% endblock %}
+
+{% block contenido %}
+
+<div class="card">
+    <h2>Asistente de Litros360</h2>
+    <p>
+        ¡Hola! Soy el asistente virtual de Litros360.
+        Puedo ayudarte a resolver dudas sobre el funcionamiento del sistema.
+    </p>
+
+    <div id="conversacion"
+         style="height:350px; overflow-y:auto; border:1px solid #ddd;
+                border-radius:8px; padding:15px; margin:20px 0;
+                background:#fafafa;">
+
+        <div style="margin-bottom:15px;">
+            <strong>Asistente:</strong>
+            <p>¿En qué puedo ayudarte? Podés preguntarme sobre liquidaciones,
+            compras, retiros, saldos o usuarios.</p>
+        </div>
+    </div>
+
+    <form id="form-chat" style="display:flex; gap:10px;">
+        <input
+            type="text"
+            id="mensaje"
+            placeholder="Escribí tu consulta..."
+            autocomplete="off"
+            required
+            style="flex:1; padding:12px; border:1px solid #ccc;
+                   border-radius:8px;"
+        >
+        <button type="submit"
+                style="padding:12px 20px; cursor:pointer;">
+            Enviar
+        </button>
+    </form>
+</div>
+
+<script>
+const formulario = document.getElementById("form-chat");
+const entrada = document.getElementById("mensaje");
+const conversacion = document.getElementById("conversacion");
+
+function agregarMensaje(remitente, texto) {
+    const bloque = document.createElement("div");
+    bloque.style.marginBottom = "15px";
+
+    const titulo = document.createElement("strong");
+    titulo.textContent = remitente + ": ";
+
+    const contenido = document.createElement("p");
+    contenido.textContent = texto;
+    contenido.style.marginTop = "5px";
+
+    bloque.appendChild(titulo);
+    bloque.appendChild(contenido);
+    conversacion.appendChild(bloque);
+
+    conversacion.scrollTop = conversacion.scrollHeight;
+}
+
+function responder(consulta) {
+    const texto = consulta.toLowerCase();
+
+    if (texto.includes("liquidacion") || texto.includes("liquidación")) {
+        return "Las liquidaciones corresponden al módulo FyO. "
+        + "El administrador debe ingresar el importe y el precio por litro. "
+        + "Litros360 calcula automáticamente los litros resultantes.";
+    }
+
+    if (texto.includes("campo simple") || texto.includes("compra")) {
+        return "En Campo Simple se registran compras expresadas directamente "
+        + "en litros. Este módulo funciona de manera independiente de FyO.";
+    }
+
+    if (texto.includes("retiro")) {
+        return "Los retiros representan litros descontados de la cuenta "
+        + "corriente del cliente. Se debe indicar la cuenta, fecha, litros, "
+        + "combustible y comprobante.";
+    }
+
+    if (texto.includes("saldo") || texto.includes("litros")) {
+        return "El saldo se calcula automáticamente a partir de los movimientos. "
+        + "Las liquidaciones y compras suman litros, mientras que los retiros "
+        + "los descuentan. El saldo puede ser negativo.";
+    }
+
+    if (texto.includes("usuario") || texto.includes("operador")
+        || texto.includes("administrador") || texto.includes("permiso")) {
+        return "Litros360 cuenta con dos perfiles. El administrador puede "
+        + "gestionar operaciones y datos. El operador puede consultar "
+        + "información, pero no registrar ni modificar operaciones.";
+    }
+
+    if (texto.includes("cliente") || texto.includes("cuit")) {
+        return "Los clientes se identifican mediante su razón social y CUIT. "
+        + "Desde el apartado Clientes podés consultar sus cuentas y movimientos.";
+    }
+
+    if (texto.includes("historial") || texto.includes("movimiento")) {
+        return "En el apartado Movimientos podés consultar las operaciones "
+        + "registradas y utilizar los filtros para buscar por cliente, "
+        + "CUIT, comprobante, unidad de negocio o tipo de operación.";
+    }
+
+    if (texto.includes("hola") || texto.includes("buenas")) {
+        return "¡Hola! Estoy para ayudarte. Podés consultarme sobre FyO, "
+        + "Campo Simple, clientes, movimientos, retiros y saldos.";
+    }
+
+    if (texto.includes("ayuda")) {
+        return "Puedo ayudarte con liquidaciones FyO, compras Campo Simple, "
+        + "retiros, saldos, clientes, movimientos y perfiles de usuario.";
+    }
+
+    return "Todavía no tengo una respuesta para esa consulta. "
+    + "Probá preguntarme sobre liquidaciones, compras, retiros, saldos, "
+    + "clientes, movimientos o usuarios.";
+}
+
+formulario.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const consulta = entrada.value.trim();
+
+    if (!consulta) return;
+
+    agregarMensaje("Vos", consulta);
+
+    const respuesta = responder(consulta);
+    agregarMensaje("Asistente", respuesta);
+
+    entrada.value = "";
+    entrada.focus();
+});
+</script>
+
+{% endblock %}

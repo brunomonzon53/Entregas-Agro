@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha del cliente | Litros360</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fa;
+            color: #263247;
+            padding: 35px;
+        }
+
+        .contenedor {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .subtitulo {
+            color: #718096;
+        }
+
+        .boton {
+            background: #172b4d;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+
+        .datos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dato span {
+            display: block;
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .dato strong {
+            font-size: 16px;
+        }
+
+        .cuentas {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .cuenta {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+
+        .cuenta h3 {
+            margin-bottom: 15px;
+        }
+
+        .saldo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2463eb;
+        }
+
+        .unidad {
+            color: #718096;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        th {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .vacio {
+            text-align: center;
+            padding: 25px;
+            color: #718096;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 15px;
+            }
+
+            .datos, .cuentas {
+                grid-template-columns: 1fr;
+            }
+
+            .encabezado {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .panel {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <div class="encabezado">
+        <div>
+            <h1>Ficha del cliente</h1>
+            <p class="subtitulo">Información y cuentas corrientes</p>
+        </div>
+
+        <a href="/clientes/" class="boton">Volver a clientes</a>
+    </div>
+
+    <div class="panel">
+        <h3>Datos generales</h3>
+
+        <div class="datos">
+            <div class="dato">
+                <span>Razón social</span>
+                <strong>{{ cliente.razon_social }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>CUIT</span>
+                <strong>{{ cliente.cuit }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>Fecha de alta</span>
+                <strong>{{ cliente.fecha_alta|date:"d/m/Y H:i" }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom: 18px;">Cuentas corrientes</h2>
+
+    <div class="cuentas">
+
+        {% for cuenta in cuentas %}
+        <div class="cuenta">
+            <h3>
+                {% if cuenta.unidad_negocio == "FYO" %}
+                    FyO
+                {% else %}
+                    Campo Simple
+                {% endif %}
+            </h3>
+
+            <div class="saldo">
+                {{ cuenta.saldo_actual|floatformat:2 }}
+            </div>
+
+            <p class="unidad">Litros disponibles</p>
+        </div>
+        {% empty %}
+        <div class="cuenta">
+            No hay cuentas corrientes registradas.
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="panel">
+        <h2 style="margin-bottom: 20px;">Historial de movimientos</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cuenta</th>
+                    <th>Tipo</th>
+                    <th>Litros</th>
+                    <th>Comprobante</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for movimiento in movimientos %}
+                <tr>
+                    <td>{{ movimiento.fecha_operacion|date:"d/m/Y" }}</td>
+
+                    <td>
+                        {{ movimiento.cuenta.get_unidad_negocio_display }}
+                    </td>
+
+                    <td>{{ movimiento.get_tipo_display }}</td>
+
+                    <td>
+                        {% if movimiento.tipo == "RETIRO" %}-{% else %}+{% endif %}
+                        {{ movimiento.litros|floatformat:2 }}
+                    </td>
+
+                    <td>{{ movimiento.comprobante|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="vacio">
+                        Este cliente todavía no tiene movimientos.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

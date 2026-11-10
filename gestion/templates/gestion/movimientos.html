@@ -1,0 +1,149 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Litros360 | Movimientos{% endblock %}
+
+{% block encabezado %}Historial de movimientos{% endblock %}
+
+{% block contenido %}
+
+<section class="section">
+
+    {% if request.user.is_staff %}
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
+
+        <a href="{% url 'crear_liquidacion_fyo' %}" class="btn">
+            + Nueva liquidación FyO
+        </a>
+
+        <a href="{% url 'crear_compra_campo_simple' %}" class="btn">
+            + Nueva compra Campo Simple
+        </a>
+
+        <a href="{% url 'crear_retiro' %}" class="btn">
+            + Nuevo retiro
+        </a>
+
+    </div>
+    {% endif %}
+
+    <h3>Consultar movimientos registrados</h3>
+
+    <form method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 25px;">
+
+        <input
+            type="text"
+            name="buscar"
+            placeholder="Buscar cliente, CUIT o comprobante..."
+            value="{{ busqueda }}"
+            style="padding: 12px; border: 1px solid #dce2e8; border-radius: 8px; flex: 1; min-width: 220px;"
+        >
+
+        <select
+            name="unidad"
+            style="padding: 12px; border: 1px solid #dce2e8; border-radius: 8px;"
+        >
+            <option value="">Todas las unidades</option>
+
+            {% for valor, etiqueta in unidades %}
+                <option value="{{ valor }}" {% if unidad == valor %}selected{% endif %}>
+                    {{ etiqueta }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select
+            name="tipo"
+            style="padding: 12px; border: 1px solid #dce2e8; border-radius: 8px;"
+        >
+            <option value="">Todos los movimientos</option>
+
+            {% for valor, etiqueta in tipos %}
+                <option value="{{ valor }}" {% if tipo == valor %}selected{% endif %}>
+                    {{ etiqueta }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button
+            type="submit"
+            style="background: #142438; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;"
+        >
+            Buscar
+        </button>
+
+        <a
+            href="{% url 'lista_movimientos' %}"
+            style="background: #edf0f3; color: #243447; padding: 12px 20px; border-radius: 8px; text-decoration: none;"
+        >
+            Limpiar
+        </a>
+
+    </form>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Unidad</th>
+                    <th>Operación</th>
+                    <th>Combustible</th>
+                    <th>Litros</th>
+                    <th>Comprobante</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for movimiento in movimientos %}
+
+                <tr>
+                    <td>{{ movimiento.fecha_operacion|date:"d/m/Y" }}</td>
+
+                    <td>
+                        {{ movimiento.cuenta.cliente.razon_social }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.cuenta.get_unidad_negocio_display }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.get_tipo_display }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.get_combustible_display|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.litros|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.comprobante|default:"—" }}
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="empty">
+                        No se encontraron movimientos registrados.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

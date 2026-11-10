@@ -1,0 +1,53 @@
+{% extends "gestion/base.html" %}
+
+{% block titulo %}Nueva compra - Campo Simple{% endblock %}
+
+{% block encabezado %}Registrar compra de Campo Simple{% endblock %}
+
+{% block contenido %}
+
+<div class="card">
+
+    <h2>Nueva compra</h2>
+
+    <p>
+        Completá los datos de la compra para registrar los litros
+        en la cuenta corriente de Campo Simple.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div style="margin-bottom: 18px;">
+
+                <label for="{{ field.id_for_label }}"
+                       style="display:block; margin-bottom:6px; font-weight:600;">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+                    <div style="color:#dc2626; margin-top:5px;">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn">
+            Registrar compra
+        </button>
+
+        <a href="{% url 'lista_movimientos' %}"
+           style="margin-left:12px;">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

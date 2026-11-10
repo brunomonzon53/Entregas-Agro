@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litros360 | Clientes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #243447;
+            padding: 35px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        a {
+            color: #25435a;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        input, button {
+            font: inherit;
+            padding: 10px 12px;
+            border: 1px solid #d5dde5;
+            border-radius: 6px;
+        }
+
+        input {
+            flex: 1;
+        }
+
+        button {
+            background: #142438;
+            color: white;
+            cursor: pointer;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f3;
+        }
+
+        th {
+            color: #8492a0;
+        }
+
+        .empty {
+            color: #8492a0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Clientes</h1>
+            <a href="/">Volver al panel principal</a>
+        </header>
+
+        <section class="section">
+            <form method="get">
+                <input
+                    type="search"
+                    name="buscar"
+                    value="{{ busqueda }}"
+                    placeholder="Buscar por razón social o CUIT"
+                    aria-label="Buscar clientes por razón social o CUIT"
+                >
+                <button type="submit">Buscar</button>
+            </form>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Razón social</th>
+                            <th>CUIT</th>
+                            <th>Fecha de alta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'detalle_cliente' cliente.id %}">
+                                    {{ cliente.razon_social }}
+                                </a>
+                            </td>
+                            <td>{{ cliente.cuit }}</td>
+                            <td>{{ cliente.fecha_alta|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td class="empty" colspan="3">No se encontraron clientes.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
