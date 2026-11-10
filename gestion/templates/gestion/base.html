@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Litros360{% endblock %}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6f9;
+            color: #243447;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 245px;
+            height: 100vh;
+            background: #142438;
+            color: white;
+            padding: 28px 18px;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #aab8c7;
+            font-size: 12px;
+            margin-bottom: 40px;
+        }
+
+        .menu-title {
+            color: #8193a7;
+            font-size: 11px;
+            margin: 25px 10px 12px;
+            text-transform: uppercase;
+        }
+
+        .menu a {
+            display: block;
+            color: #dce5ee;
+            text-decoration: none;
+            padding: 13px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .menu button {
+            display: block;
+            width: 100%;
+            color: #dce5ee;
+            background: none;
+            border: 0;
+            text-align: left;
+            padding: 13px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .menu a.active,
+        .menu a:hover,
+        .menu button:hover {
+            background: #25435a;
+            color: white;
+        }
+
+        .main {
+            margin-left: 245px;
+            padding: 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            gap: 15px;
+        }
+
+        .topbar h1 {
+            font-size: 26px;
+        }
+
+        .user {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .section h3 {
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 550px;
+        }
+
+        th, td {
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f3;
+            font-size: 13px;
+        }
+
+        th {
+            color: #8492a0;
+        }
+
+        .empty {
+            color: #8492a0;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    {% block estilos %}{% endblock %}
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">◈ LITROS360</div>
+    <div class="subtitle">Gestión inteligente de cuentas corrientes</div>
+
+    <div class="menu-title">Principal</div>
+
+    <nav class="menu">
+        <a href="/">▦ Panel principal</a>
+    </nav>
+
+    <div class="menu-title">Gestión</div>
+
+    <nav class="menu">
+        <a href="/clientes/">♙ Clientes</a>
+        <a href="{% url 'lista_cuentas_corrientes' %}">▤ Cuentas corrientes</a>
+        <a href="/movimientos/">⇄ Movimientos</a>
+        <a href="{% url 'chatbot' %}">Asistente virtual</a>
+    </nav>
+
+    <div class="menu-title">Sistema</div>
+
+    <nav class="menu">
+        <a href="/admin/">⚙ Administración</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </nav>
+
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <h1>{% block encabezado %}Litros360{% endblock %}</h1>
+
+        <div class="user">
+            Usuario: {{ request.user.username }}
+        </div>
+    </header>
+
+    {% block contenido %}{% endblock %}
+
+</main>
+
+</body>
+</html>
