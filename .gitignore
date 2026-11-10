@@ -1,0 +1,21 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Base de datos local
+*.sqlite3
+
+# Claves y variables de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos generados por Python
+__pycache__/
+*.py[cod]
+
+# Configuración local de editores y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
